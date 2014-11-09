@@ -10,7 +10,7 @@ using namespace std;
 
 int main(){
 
-    const string fileName="/home/garzon/Downloads/facesImages/1.jpg";
+    const string fileName="/home/garzon/Downloads/facesImages/7.jpg";
 
     options ops;
     FaceDetection FD(ops);
