@@ -1,0 +1,124 @@
+layers {
+  name: "facedetect"
+  type: MEMORY_DATA
+  top: "data"
+  top: "label"
+  memory_data_param {
+    batch_size: 1
+    channels: 1
+    height: 32
+    width: 36
+  }
+}
+
+layers {
+  name: "conv1"
+  type: CONVOLUTION
+  bottom: "data"
+  top: "conv1"
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    weight_filler {
+      type: "gaussian" # initialize the filters from a Gaussian
+      std: 0.01        # distribution with stdev 0.01 (default mean: 0)
+    }
+    bias_filler {
+      type: "constant" # initialize the biases to zero (0)
+      value: 0
+    }
+  }
+}
+
+layers {
+  name: "s1"
+  type: POOLING
+  bottom: "conv1"
+  top: "s1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2      # step two pixels (in the bottom blob) between pooling regions
+  }
+}
+
+layers {
+  name: "conv2"
+  type: CONVOLUTION
+  bottom: "s1"
+  top: "conv2"
+  convolution_param {
+    num_output: 50
+    kernel_size: 3
+    weight_filler {
+      type: "gaussian" # initialize the filters from a Gaussian
+      std: 0.01        # distribution with stdev 0.01 (default mean: 0)
+    }
+    bias_filler {
+      type: "constant" # initialize the biases to zero (0)
+      value: 0
+    }
+  }
+}
+
+layers {
+  name: "s2"
+  type: POOLING
+  bottom: "conv2"
+  top: "s2"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2      # step two pixels (in the bottom blob) between pooling regions
+  }
+}
+
+layers {
+  name: "n1"
+  type: INNER_PRODUCT
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+  bottom: "s2"
+  top: "n1"
+}
+
+layers {
+  name: "actn1"
+  bottom: "n1"
+  top: "n1"
+  type: TANH
+}
+
+layers {
+  name: "n2"
+  type: INNER_PRODUCT
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+  bottom: "n1"
+  top: "n2"
+}
+
+layers {
+  name: "prediction"
+  type: SOFTMAX
+  bottom: "n2"
+  top: "pred"
+}
